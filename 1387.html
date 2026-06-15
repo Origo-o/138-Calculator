@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="mr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Case Summary - Professional</title>
+
+<style>
+/* GLOBAL RESET */
+* {
+    box-sizing: border-box; 
+}
+
+body {
+    font-family: "Arial", "Times New Roman", serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 10px;
+}
+
+/* SCREEN VIEW */
+.container {
+    width: 100%;
+    max-width: 850px; 
+    margin: auto;
+    background: white;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+h2 {
+    text-align: center;
+    text-decoration: underline;
+    margin: 0 0 15px 0;
+    text-transform: uppercase;
+    font-size: 18px;
+    line-height: 1.4;
+}
+
+table {
+    width: 100%; 
+    border-collapse: collapse;
+    table-layout: fixed; 
+}
+
+th, td {
+    border: 1px solid black;
+    padding: 5px 8px;
+    font-size: 13px;
+    vertical-align: middle;
+    word-wrap: break-word; 
+}
+
+th {
+    background-color: #f9f9f9;
+    text-align: center;
+    font-weight: bold;
+}
+
+.lang-mr {
+    display: block;
+    font-size: 12px;
+    color: #000;
+    font-weight: normal;
+    margin-top: 2px;
+}
+
+input, textarea {
+    width: 100%;
+    border: none;
+    font-family: "Arial", serif;
+    font-size: 13px;
+    outline: none;
+    background: transparent;
+}
+
+input[readonly] {
+    background: #fcfcfc;
+    font-weight: bold;
+}
+
+.buttons {
+    text-align: right;
+    margin-bottom: 10px;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    background: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+}
+
+.signature-section {
+    margin-top: 30px;
+    text-align: right;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+/* PRINT SETTINGS - FORCING VISIBILITY */
+@media print {
+    @page {
+        size: A4; 
+        margin: 10mm; 
+    }
+    
+    body {
+        background: white;
+        padding: 0;
+        margin: 0;
+    }
+    
+    .buttons {
+        display: none; 
+    }
+    
+    .container {
+        box-shadow: none;
+        width: 100%; 
+        max-width: 100%; 
+        padding: 0; 
+        margin: 0;
+    }
+
+    table {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="buttons">
+    <button onclick="prepareAndPrint()">Print / Save PDF</button>
+</div>
+
+<h2>Case Summary For Taking Cognizance<br>दखल घेण्यासाठी प्रकरणाचा सारांश</h2>
+
+<table>
+<tr>
+<td colspan="2">
+    <b>E-Filing No. / ई-फायलिंग क्रमांक:</b> 
+    <input type="text" class="print-val">
+</td>
+<td style="width: 30%;">
+    <b>E-Filing Date / दिनांक:</b> 
+    <input type="date" class="date-picker print-val">
+</td>
+</tr>
+
+<tr>
+<th style="width: 40px;">Sr.<br><span class="lang-mr">अनु.</span></th>
+<th style="width: 35%;">Queries<br><span class="lang-mr">तपशील / प्रश्न</span></th>
+<th>Answer<br><span class="lang-mr">उत्तर / माहिती</span></th>
+</tr>
+
+<tr>
+<td>1</td>
+<td>Drawer's Bank<br><span class="lang-mr">धनादेश देणाऱ्याची बँक</span></td>
+<td><input type="text" class="print-val"></td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>Drawee's Bank<br><span class="lang-mr">धनादेश स्वीकारणाऱ्याची बँक</span></td>
+<td><input type="text" class="print-val"></td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>Date of Cheque<br><span class="lang-mr">धनादेशाचा दिनांक</span></td>
+<td><input type="date" class="date-picker print-val"></td>
+</tr>
+
+<tr>
+<td>4</td>
+<td>Date of Dishonor<br><span class="lang-mr">धनादेश अनादर झाल्याचा दिनांक</span></td>
+<td><input type="date" class="date-picker print-val"></td>
+</tr>
+
+<tr>
+<td>5</td>
+<td>Date of Notice<br><span class="lang-mr">नोटीसचा दिनांक</span></td>
+<td><input type="date" class="date-picker print-val"></td>
+</tr>
+
+<tr>
+<td>6</td>
+<td>Date of Dispatch<br><span class="lang-mr">नोटीस पाठवल्याचा दिनांक</span></td>
+<td><input type="date" class="date-picker print-val"></td>
+</tr>
+
+<tr>
+<td>7</td>
+<td>Date of Service<br><span class="lang-mr">नोटीस मिळाल्याचा दिनांक</span></td>
+<td><input type="date" id="dateOfService" class="date-picker print-val" onchange="calculateDates()"></td>
+</tr>
+
+<tr>
+<td>8</td>
+<td>Statutory Limitation (15 Days)<br><span class="lang-mr">वैधानिक मर्यादा (१५ दिवस)</span></td>
+<td><input type="text" id="statutoryLimit" class="print-val" readonly></td>
+</tr>
+
+<tr>
+<td>9</td>
+<td>Filing Period (30 Days)<br><span class="lang-mr">दाखल करण्याचा कालावधी (३० दिवस)</span></td>
+<td><input type="text" id="fillingLimit" class="print-val" readonly></td>
+</tr>
+
+<tr>
+<td>10</td>
+<td>Date of Filing<br><span class="lang-mr">दाखल केल्याचा दिनांक</span></td>
+<td><input type="date" class="date-picker print-val"></td>
+</tr>
+
+<tr>
+<td>11</td>
+<td>Amount<br><span class="lang-mr">रक्कम</span></td>
+<td><input type="number" id="amount" class="print-val" oninput="calculateCourtFee()"></td>
+</tr>
+
+<tr>
+<td>12</td>
+<td>Legally Enforceable Debt<br><span class="lang-mr">कायदेशीर वसुलीयोग्य कर्ज</span></td>
+<td><input type="text" id="legalDebt" class="print-val" readonly></td>
+</tr>
+
+<tr>
+<td>13</td>
+<td>Court Fee (Rs.200 per 10k)<br><span class="lang-mr">न्यायालयीन शुल्क</span></td>
+<td><input type="text" id="courtFee" class="print-val" readonly></td>
+</tr>
+
+<tr>
+<td>14</td>
+<td>Complainant's Name & Address<br><span class="lang-mr">तक्रारदाराचे नाव आणि पत्ता</span></td>
+<td><textarea rows="2" class="print-val"></textarea></td>
+</tr>
+
+<tr>
+<td>15</td>
+<td>Accused Name & Address<br><span class="lang-mr">आरोपीचे नाव आणि पत्ता</span></td>
+<td><textarea rows="2" class="print-val"></textarea></td>
+</tr>
+
+</table>
+
+<div class="signature-section">
+    <br><br>
+    Signature / सही<br>
+    Advocate / वकील
+</div>
+
+</div>
+
+<script>
+// Format date to DD/MM/YYYY
+function formatDate(dateStr) {
+    if (!dateStr) return "";
+    let d = new Date(dateStr);
+    let day = String(d.getDate()).padStart(2, '0');
+    let month = String(d.getMonth() + 1).padStart(2, '0');
+    let year = d.getFullYear();
+    return day + "/" + month + "/" + year;
+}
+
+function addDays(dateStr, days) {
+    let d = new Date(dateStr);
+    d.setDate(d.getDate() + days);
+    return d;
+}
+
+function calculateDates() {
+    let serviceDate = document.getElementById("dateOfService").value;
+    if (!serviceDate) return;
+    let statutoryDate = addDays(serviceDate, 15);
+    let filingDate = addDays(statutoryDate, 30);
+    document.getElementById("statutoryLimit").value = formatDate(statutoryDate);
+    document.getElementById("fillingLimit").value = formatDate(filingDate);
+}
+
+function calculateCourtFee() {
+    let amount = parseFloat(document.getElementById("amount").value);
+    if (!amount || amount <= 0) {
+        document.getElementById("legalDebt").value = "";
+        document.getElementById("courtFee").value = "";
+        return;
+    }
+    document.getElementById("legalDebt").value = amount.toLocaleString("en-IN") + "/-";
+    let units = Math.ceil(amount / 10000);
+    let fee = units * 200;
+    document.getElementById("courtFee").value = fee.toLocaleString("en-IN") + "/-";
+}
+
+// THE MASTER PRINT FUNCTION
+function prepareAndPrint() {
+    const inputs = document.querySelectorAll('.print-val');
+    const originalData = [];
+
+    // 1. Convert EVERYTHING to plain text
+    inputs.forEach((input) => {
+        const value = input.value;
+        const type = input.type;
+        const tag = input.tagName;
+
+        originalData.push({ element: input, value: value, type: type, tag: tag });
+
+        // If it's a date, format it. Otherwise, keep as is.
+        let displayValue = (type === 'date') ? formatDate(value) : value;
+        
+        // Temporarily replace the input with a span (plain text)
+        let span = document.createElement('span');
+        span.className = 'print-temp-span';
+        span.innerText = displayValue;
+        input.parentNode.insertBefore(span, input);
+        input.style.display = 'none';
+    });
+
+    // 2. Trigger Print
+    window.print();
+
+    // 3. Restore the original inputs
+    document.querySelectorAll('.print-temp-span').forEach(span => span.remove());
+    originalData.forEach(item => {
+        item.element.style.display = 'block';
+    });
+}
+</script>
+
+</body>
+</html>
